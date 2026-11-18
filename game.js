@@ -1088,7 +1088,7 @@
         ${controls.html}
         ${controls.showsHand ? '' : handHtml(viewer, display)}
         ${log.length > 1 ? `
-          <details class="log">
+          <details class="log" ${storageGet('throne.logOpen') ? 'open' : ''}>
             <summary>📖 What happened (${log.length})</summary>
             <ol reversed>${log.map((ev) => `<li>${eventHtml(ev, viewer)}</li>`).join('')}</ol>
           </details>` : ''}
@@ -1097,6 +1097,9 @@
 
     app.querySelector('[data-rules]').addEventListener('click', showRules);
     app.querySelector('.guide').addEventListener('toggle', (e) => storageSet('throne.guideClosed', e.target.open ? '' : '1'));
+    // The "What happened" list stays open (or closed) the way you left it.
+    const logBox = app.querySelector('.log');
+    if (logBox) logBox.addEventListener('toggle', (e) => storageSet('throne.logOpen', e.target.open ? '1' : ''));
     app.querySelectorAll('[data-open-screen]').forEach((el) => el.addEventListener('click', () => openScreen(+el.dataset.openScreen)));
     const peek = document.getElementById('peek');
     if (peek) peek.addEventListener('click', chooseWhoPeeks);
