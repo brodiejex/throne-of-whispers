@@ -66,5 +66,14 @@ the page open. A player who drops out can rejoin with the same name, and the hos
 | `style.css` | Colors, card designs and layout. |
 | `tests/tests.html` | Open in a browser to run the rules checks (includes 400 computer-only games). |
 
-The cards use emoji designs for now. Card pictures can be added later the same way as in
-Dungeon's Treasure.
+## Card art
+
+The full-size originals (1024 × 1536) are kept in `art/` on the computer they were made on;
+they are left out of GitHub because the game doesn't need them. The game loads small copies
+from `art/cards/` (one `.webp` per card, 480 × 720 pixels, about 110 KB each) so it stays
+quick on phones. They're listed in `CARD_ART` at the top of `game.js`; a card left off that
+list uses its emoji design instead. Face-down cards use `art/cards/back.webp`.
+
+To replace a picture, make a new small copy with the same name, for example:
+
+    ffmpeg -i "art/Rogue.png" -vf "scale=480:720:flags=lanczos,format=rgb24" -c:v libwebp -quality 80 art/cards/rogue.webp

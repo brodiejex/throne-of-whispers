@@ -23,6 +23,20 @@
   const BOT_DELAY = 1500; // long enough to read what the computer did
   const slotNumber = (k) => String(k + 1);
   const seatNumber = (i) => String(i + 1);
+  // Finished card pictures (name and ability are part of the picture), made
+  // small from the full-size art in art/. A character left out of this list
+  // falls back to its emoji design.
+  const CARD_ART = {
+    guildmaster: 'art/cards/guildmaster.webp',
+    rogue: 'art/cards/rogue.webp',
+    bard: 'art/cards/bard.webp',
+    wizard: 'art/cards/wizard.webp',
+    paladin: 'art/cards/paladin.webp',
+  };
+  const BACK_ART = 'art/cards/back.webp';
+  // Load them all up front so a card never appears blank mid-game.
+  [...Object.values(CARD_ART), BACK_ART].forEach((src) => { new Image().src = src; });
+
   const BOT_NAMES = ['Grimbold', 'Elowen', 'Thrak', 'Seraphine', 'Pip', 'Morwen', 'Bramble'];
 
   let mode = 'local';
@@ -102,6 +116,14 @@
 
   function cardHtml(card, { extraClass = '', attrs = '', badge = '', tag = '' } = {}) {
     const c = TW.CHARACTERS[card.type];
+    const about = `${esc(c.name)}. Action: ${esc(c.action)} Block: ${esc(c.block)}`;
+    if (CARD_ART[card.type]) {
+      return `<div class="card has-art t-${card.type} ${extraClass}" title="${about}" ${attrs}>
+        <img class="art-img" src="${CARD_ART[card.type]}" alt="${about}">
+        ${tag ? `<div class="card-tag">${tag}</div>` : ''}
+        ${badge ? `<div class="badge">${badge}</div>` : ''}
+      </div>`;
+    }
     return `<div class="card t-${card.type} ${extraClass}" title="${esc(c.name)}: ${esc(c.action)} ${esc(c.block)}" ${attrs}>
       <div class="icon">${c.icon}</div>
       <div class="title">${esc(c.name)}</div>
@@ -114,8 +136,8 @@
 
   // Face-down card, optionally with a number for a remote player's choice.
   function backHtml({ number = '', attrs = '', extraClass = '' } = {}) {
-    return `<div class="card back ${extraClass}" ${attrs}>
-      <div class="crest">👑</div>
+    return `<div class="card has-art back ${extraClass}" ${attrs}>
+      <img class="art-img" src="${BACK_ART}" alt="Face-down card">
       ${number ? `<div class="badge">${number}</div>` : ''}
     </div>`;
   }
